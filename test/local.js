@@ -3,8 +3,11 @@ var assert = require('assert'),
 
 describe('local resolution tests', function() {
 	it('should be able to find a local copy of underscore', function(done) {
-		resolveme('underscore as _', { cwd: __dirname }, function(err, bundle) {
+		resolveme('underscore', { cwd: __dirname }, function(err, data) {
 			assert.ifError(err);
+
+			console.log(data);
+			done();
 		});
 	});
 });
