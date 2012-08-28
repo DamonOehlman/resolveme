@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "async": "0.1.x",
-    "findme": "*"
+    "debug": "*",
+    "findme": "*",
+    "request": "2.10.x"
   },
   "devDependencies": {
     "mocha": "1.3.x"
