@@ -49,6 +49,15 @@ Bundle.prototype.add = function(target) {
 
 	// add the target to the targets list
 	if (target && target.name) {
+		var existing = this.targets.filter(function(item) {
+			return item.name.toLowerCase() === target.name.toLowerCase();
+		})[0];
+
+		// if we have an existing item with the same name, return
+		// TODO: check versions see if we should override, etc
+		if (existing) return this;
+
+		// add the target
 		this.targets.push(target);
 	}
 
