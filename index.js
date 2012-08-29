@@ -1,6 +1,5 @@
 var async = require('async'),
 	findme = require('findme'),
-	glob = require('glob'),
 	events = require('events'),
 	debug = require('debug')('resolveme'),
 	localResolver = require('./resolvers/local'),

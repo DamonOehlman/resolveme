@@ -1,7 +1,7 @@
 var debug = require('debug')('resolveme'),
 	findme = require('findme'),
 	_ = require('underscore'),
-	reNameParts = /^.*\/([\w\-]+)\.?(.*)$/,
+	reNameParts = /^(?:.*\/)?([\w\-]+)(\.\d+\.\d+\.\d+)?\.?(.*)$/,
 	reParsableExts = /(?:js|css)$/;
 
 function Manifest(name, basePath) {
@@ -18,7 +18,7 @@ Manifest.prototype = {
 			data = {
 				content: content,
 				dependencies: [],
-				fileType: match[2],
+				fileType: match[3],
 				name: match[1]
 			},
 			results;
@@ -32,11 +32,22 @@ Manifest.prototype = {
 			data.dependencies = _.values(results.dependencies);
 		}
 
-		// add the data
-		this.items.push(data);
+		// if the item name matches the manifest name (e.g. underscore === underscore)
+		// then unshift the data to the start of the array
+		if (data.name === this.name) {
+			this.items.unshift(data);
+		}
+		// otherwise, push it on the end
+		else {
+			this.items.push(data);
+		}
 
 		// return the data
 		return data;
+	},
+
+	getContent: function(fileType) {
+		console.log(_.pluck(this.items, 'fileType'));
 	}
 };
 
