@@ -2,7 +2,8 @@ var debug = require('debug')('resolveme'),
 	findme = require('findme'),
 	_ = require('underscore'),
 	reNameParts = /^(?:.*\/)?([\w\-]+)(\.\d+\.\d+\.\d+)?\.?(.*)$/,
-	reParsableExts = /(?:js|css)$/;
+	reParsableExts = /(?:js|css)$/,
+	reLeadingDot = /^\./;
 
 function Manifest(name, basePath) {
 	this.name = name;
@@ -50,7 +51,13 @@ Manifest.prototype = {
 		var contents = [];
 
 		// if the filetype is not defined, and we only have one item use that filetype
-		fileType = (fileType || (this.items[0] || {}).fileType).toLowerCase();
+		fileType = (fileType || (this.items[0] || {}).fileType)
+
+			// convert to lowercase for consistency
+			.toLowerCase()
+
+			// remove the leading dot on the filetype if it is supplied
+			.replace(reLeadingDot, '');
 
 		// return the contents of each of the items matching the specified filetype
 		this.items.forEach(function(item) {

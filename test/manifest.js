@@ -2,6 +2,15 @@ var assert = require('assert'),
 	resolveme = require('..'),
 	Manifest = require('../manifest');
 
+function defineDummyUnderscore() {
+	var m = new Manifest('underscore', '/tmp/modules');
+
+	m.add('function _() {}', '/tmp/modules/underscore.1.3.3.js');
+	m.add('var _s = {};', '/tmp/modules/underscore-string.js');
+
+	return m;
+}
+
 describe('manifest creation tests', function() {
 	it('should be able to create an empty manifest', function() {
 		assert(new Manifest());
@@ -57,15 +66,26 @@ describe('manifest creation tests', function() {
 	});
 
 	it('should order parts with a name match before others', function() {
-		var m = new Manifest('underscore', '/tmp/modules');
-
-		m.add('function _() {}', '/tmp/modules/underscore.1.3.3.js');
-		m.add('var _s = {};', '/tmp/modules/underscore-string.js');
+		var m = defineDummyUnderscore();
 
 		assert.equal(m.items.length, 2);
 		assert.equal(m.items[0].name, 'underscore');
 
 		// check the manifest content
 		assert.equal(m.getContent('js'), 'function _() {}\n;var _s = {};');
+	});
+
+	it('should be able to retrieve using an uppercase filetype', function() {
+		var m = defineDummyUnderscore();
+
+		// check the manifest content
+		assert.equal(m.getContent('JS'), 'function _() {}\n;var _s = {};');
+	});
+
+	it('should be able to retrieve using an filetype with a leading dot', function() {
+		var m = defineDummyUnderscore();
+
+		// check the manifest content
+		assert.equal(m.getContent('.js'), 'function _() {}\n;var _s = {};');
 	});
 });
