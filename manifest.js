@@ -19,15 +19,22 @@ Manifest.prototype = {
 				dependencies: [],
 				fileType: match[2],
 				name: match[1]
-			};
+			},
+			results;
 
 		// if we have a file type that should be scanned for dependencies do that now
 		if (reParsableExts.test(data.fileType)) {
-			_.extend(data, findme(data.content.toString('utf8')));
+			results = findme(data.content.toString('utf8'));
+
+			data.content = results.content;
+			data.dependencies = _.values(results.dependencies);
 		}
 
 		// add the data
 		this.items.push(data);
+
+		// return the data
+		return data;
 	}
 };
 
