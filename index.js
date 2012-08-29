@@ -3,36 +3,13 @@ var async = require('async'),
 	glob = require('glob'),
 	events = require('events'),
 	debug = require('debug')('resolveme'),
-	fs = require('fs'),
-	path = require('path'),
-	semver = require('semver'),
+	localResolver = require('./resolvers/local'),
 	util = require('util'),
-	reCommaDelim = /\,\s*/,
-	reLeadingDot = /^\./,
-	reSemVer = /^.*((?:\d+|x)\.(?:\d+|x)\.(?:\d+|x)).*$/,
-	reSemVerAny = /(?:(\.)x(\.?)|(\.?)x(\.))/;
+	reCommaDelim = /\,\s*/;
 
 /* private helpers */
 
 function parseTargets(targets) {
-	if (typeof targets == 'string' || (targets instanceof String)) {
-		targets = targets.split(reCommaDelim);
-	}
-
-	// ensure that each of the targets is a valid findme definition
-	targets = targets.map(function(target) {
-		if (! target.name) {
-			target = new findme.Requirement(target);
-		}
-
-		return target;
-	});
-
-	return targets;
-}
-
-function versionSort(a, b) {
-	return semver.rcompare(a.replace(reSemVer, '$1'), b.replace(reSemVer, '$1'));
 }
 
 /* resolveme Bundle definition */
@@ -41,123 +18,99 @@ function Bundle(targets) {
 	// call the inherits event emitter constructor
 	events.EventEmitter.call(this);
 
-	// save the targets
-	this.targets = targets || [];
+	// initialise the targets
+	this.targets = [];
+
+	// iterate through the targets provided to the constructor and add them
+	(targets || []).forEach(this.add.bind(this));
 }
 
 util.inherits(Bundle, events.EventEmitter);
 
-Bundle.prototype._find = function(opts, target, callback) {
-	var fileType = (opts.fileType || 'js').replace(reLeadingDot, ''),
-		modulePath = path.resolve(opts.cwd, 'modules'),
-		modulePaths = [], itemPath;
+Bundle.prototype._locate = function(target, opts, callback) {
+	async.detect(
+		opts.resolvers || [localResolver],
 
-	// add a module search path for a pattern specific path if we have one
-	if (opts.pattern) {
-		modulePaths.push(path.join(modulePath, opts.pattern, target.name));
-		modulePaths.push(path.join(modulePath, opts.pattern));
-	}
+		function(resolver, itemCallback) {
+			resolver.exists(target, opts, itemCallback);
+		},
 
-	// add the module name path to the search
-	modulePaths.push(path.join(modulePath, target.name));
-	modulePaths.push(modulePath);
-
-	// detect the module path
-	async.detect(modulePaths, fs.exists || path.exists, function(basePath) {
-		debug('looking for modules in base path: ' + basePath);
-
-		// if we have a version for the item, add that to the fileType
-		if (target.version && target.version !== 'latest') {
-			fileType = ('.' + target.version + '.' + fileType).replace(reSemVerAny, '$1?$2');
-		}
-		else {
-			fileType = '*.' + fileType;
-		}
-
-		// update the itemPath to include the name and filetype
-		itemPath = path.join(basePath, target.name + fileType);
-
-		// glob the itempath
-		debug('checking if item "' + target.name + '"" exists in local modules: ' + itemPath);
-		glob(itemPath, function(err, files) {
-			if (err || (! files.length)) return callback(false);
-
-			// sort the files based on a semver comparison
-			files = files.sort(versionSort);
-
-			debug(files.length + ' items matching glob expression');
-			callback(null, files[0]);
-		});
-	});
-
-	/*
-	// if we have a version for the item, add that to the fileType
-	if (target.version && target.version !== 'latest') {
-		fileType = ('.' + target.version + fileType).replace(reSemVerAny, '$1?$2');
-	}
-	else {
-		fileType = '*' + fileType;
-	}
-
-	// update the itemPath to include the name and filetype
-	itemPath = path.join(itemPath, target.name + fileType);
-
-	// glob the itempath
-	debug('checking if item "' + target.name + '"" exists in local modules: ' + itemPath);
-	glob(itemPath, function(err, files) {
-		if (err || (! files.length)) return callback(false);
-
-		// sort the files based on a semver comparison
-		files = files.sort(versionSort);
-
-		debug(files.length + ' items matching glob expression');
-		callback(files.length > 0, files[0]);
-	});
-	*/
+		callback
+	);
 };
 
-Bundle.prototype._get = function(opts, target, callback) {
-	this._find(opts, target, function(err, itemPath) {
-		if (err) return callback(err);
+Bundle.prototype.add = function(target) {
+	if (typeof target == 'string' || (target instanceof String)) {
+		target = new findme.Requirement(target);
+	}
 
-		// flag the item as resolved
-		target.resolved = true;
+	// add the target to the targets list
+	this.targets.push(target);
 
-		debug('found: ' + itemPath);
-		callback();
-	});
+	return this;
 };
 
 Bundle.prototype.resolve = function(opts, callback) {
 	// find the targets that still required resolution	
-	var targets = this.targets.filter(function(target) {
-		return !target.resolved;
-	});
-
-	if (typeof opts == 'function') {
-		callback = opts;
-		opts = {};
-	}
+	var bundle = this,
+		targets = this.targets.filter(function(target) {
+			return target && typeof target._manifest == 'undefined';
+		});
 
 	// if we have no targets, then trigger the callback and exit
-	if (targets.length === 0) return this.emit('complete');
+	if (targets.length === 0) {
+		if (callback) callback(null, this);
+
+		return this.emit('complete');
+	}
 
 	// get the sources for each of the specified targets
 	async.forEach(
-		targets, 
-		this._get.bind(this, opts), 
-		this.resolve.bind(this, opts, callback)
+		targets,
+
+		function(target, itemCallback) {
+			bundle._locate(target, opts, function(resolver) {
+				if (! resolver) return callback(new Error('unable to resolve: ' + target));
+
+				resolver.retrieve(target, opts, function(err, manifest) {
+					console.log(target._manifest = manifest || {});
+
+					itemCallback(err);
+				});
+			});
+		},
+
+		function(err) {
+			if (err) return callback(err);
+
+			bundle.resolve(opts, callback);
+		}
 	);
 };
 
 /* main */
 
 function resolveme(targets, opts, callback) {
-	var bundle = new Bundle(parseTargets(targets));
+	var bundle;
 
-	// resolve the bundle
-	bundle.resolve(opts);
-	bundle.on('complete', callback);
+	// if we have been provied a string of targets, then split on commas
+	if (typeof targets == 'string' || (targets instanceof String)) {
+		targets = targets.split(reCommaDelim);
+	}
+
+	// check for the 2 arg variant of the function
+	if (typeof opts == 'function') {
+		callback = opts;
+		opts = {};
+	}
+
+	// create the new bundle
+	bundle = new Bundle(targets);
+
+	// resolve the bundle (if we have targets)
+	if (bundle.targets.length > 0) {
+		bundle.resolve(opts, callback);
+	}
 
 	// return the scope which passes on useful events
 	return bundle;

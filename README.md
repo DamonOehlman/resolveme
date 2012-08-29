@@ -2,6 +2,8 @@
 
 This is a utility library for helping resolve [findme](https://github.com/DamonOehlman/findme) module requirements back to a valid source.  This package is designed to assist with resolving clientside module dependencies effectively.
 
+The core `resolveme` module is designed to resolve dependencies against the local filesystem, but has been designed to allow remote resolvers to also work.
+
 A valid source can be any of the following:
 
 - A local folder stored in a versioned `modules` directory in the current working directory (which can be overriden with resolveme opts).  For example, a local copy of the underscore library would be located in the `modules/underscore/1.3.3/` directory.
