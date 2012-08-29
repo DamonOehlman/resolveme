@@ -1,33 +1,56 @@
 # resolveme
 
-This is a utility library for helping resolve [findme](https://github.com/DamonOehlman/findme) module requirements back to a valid source.  This package is designed to assist with resolving clientside module dependencies effectively.
+The `resolveme` module makes it much simpler to incorporate web resources into your project through the use of a centralized repository of libraries. 
 
-The core `resolveme` module is designed to resolve dependencies against the local filesystem, but has been designed to allow remote resolvers to also work.
 
-A valid source can be any of the following:
+## Understanding Repository Structure
 
-- A local folder stored in a versioned `modules` directory in the current working directory (which can be overriden with resolveme opts).  For example, a local copy of the underscore library would be located in the `modules/underscore/1.3.3/` directory.
+There are two types of repository structure that resolveme can work with, either:
 
-- A valid (i.e. appropriately tagged) github repository that contains valid web files (e.g. `js`, `css`, `html`) files.
+- a strict repository structure where modules are stored in versioned directories; or,
+- a loose repository structure where modules are stored as simple file references
 
-- A [volo](https://github.com/volojs/volo) override as specified in [volojs/repos](https://github.com/volojs/repos)
+Additionally, a mixture of the two structures can be used, however, it should be noted that if a strict structure is detected for a particular module, and a loose equivalent of the module will always be ignored.
 
-- A [bake.io](http://github.com/bake-io) recipe as defined in the [cookbook](https://github.com/bake-io/cookbook)
+Let's walk through a couple of structure examples:
 
-The search for the local folder is completed first, and once this has been completed, the other potential sources are queried in parallel for optimal execution time.
+### Example 1: Strict Structure
 
-## Example Usage
+The following is an example of a strict module structure where copies of backbone, underscore and jquery are kept:
 
-```js
-resolveme(['underscore 1.3.x'], function(err, bundle) {
-
-});
+```
+- modules
+|- backbone.0.9.2
+|- backbone.0.9.1
+|- backbone.0.9.0
+|- backbone.0.5.2
+|- jquery.1.8.0
+|- jquery.1.7.2
+|- jquery.1.7.1
+|- jquery.1.6.3
+|- underscore.1.3.3
+|- underscore.1.3.2
+|- underscore.1.3.1
+|- underscore.1.3.0
+|- underscore.1.2.4
 ```
 
-If you wish resolveme to ignore any local modules then you can specify the `ignoreLocal` option to reject skip local modules.
+As each of these libraries is a simple JS library, then each of the folders will only contain a backbone.js, jquery.js or underscore.js depending on the library.  
 
-```js
-resolveme(['underscore 1.3.x'], { ignoreLocal: true }, function(err, bundle) {
-	
-});
+It should also be noted that for single-file libraries, that you can skip including the folder and simply place a [semver] named file in the modules folder also (e.g. `backbone.0.9.2.js`).
+
+### Example 2: Loose Structure
+
+If the above structure seems too heavy and convoluted for you, then you can do away with version numbers all together and use a loose directory structure instead:
+
 ```
+- modules
+|- backbone.js
+|- underscore.js
+|- jquery.js
+```
+
+As you can see this is a far simpler structure, but does mean that any version specific [findme] references will resolve to the unversioned file stored in the loose repository.
+
+[semver]: http://semver.org/ "Semantic Versioning"
+[findme]: https://github.com/DamonOehlman/findme
