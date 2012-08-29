@@ -30,6 +30,15 @@ describe('local resolution tests', function() {
 					done();
 				});
 			});
+
+			it('should be able to find a local copy of backbone', function(done) {
+				resolveme('backbone', { repository: value }, function(err, bundle) {
+					assert.ifError(err);
+					assert.equal(bundle.targets.length, 3);
+
+					done();
+				});
+			});
 		});
 	});
 
