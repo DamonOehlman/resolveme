@@ -12,9 +12,8 @@
   "dependencies": {
     "async": "0.1.x",
     "debug": "*",
-    "findme": "*",
+    "findme": "0.1.x",
     "fstream": "0.1.x",
-    "glob": "3.1.x",
     "semver": "1.0.x",
     "underscore": "1.3.x"
   },
