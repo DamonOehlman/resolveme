@@ -47,20 +47,20 @@ Manifest.prototype = {
 	},
 
 	getContent: function(fileType) {
-		var contents = '';
+		var contents = [];
 
 		// if the filetype is not defined, and we only have one item use that filetype
-		fileType = (fileType || (items[0] || {}).fileType).toLowerCase();
+		fileType = (fileType || (this.items[0] || {}).fileType).toLowerCase();
 
 		// return the contents of each of the items matching the specified filetype
 		this.items.forEach(function(item) {
 			// if the item filetype matches the requested filetype add the content
 			if (item.fileType === fileType) {
-				content += item.content;
+				contents.push(item.content);
 			}
 		});
 
-		return content;
+		return contents.join('\n;');
 	}
 };
 

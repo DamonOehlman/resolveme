@@ -51,6 +51,9 @@ describe('manifest creation tests', function() {
 		assert.equal(data.name, 'underscore');
 		assert.equal(data.fileType, 'js');
 		assert.equal(data.content, 'function _() {}');
+
+		// check the manifest content
+		assert.equal(m.getContent(), 'function _() {}');
 	});
 
 	it('should order parts with a name match before others', function() {
@@ -61,5 +64,8 @@ describe('manifest creation tests', function() {
 
 		assert.equal(m.items.length, 2);
 		assert.equal(m.items[0].name, 'underscore');
+
+		// check the manifest content
+		assert.equal(m.getContent('js'), 'function _() {}\n;var _s = {};');
 	});
 });
