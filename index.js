@@ -72,9 +72,14 @@ Bundle.prototype.resolve = function(opts, callback) {
 			bundle._locate(target, opts, function(resolver) {
 				if (! resolver) return callback(new Error('unable to resolve: ' + target));
 
-				resolver.retrieve(target, opts, function(err, manifest) {
-					console.log(target._manifest = manifest || {});
+				resolver.retrieve(target, opts, function(err, manifest, deps) {
+					// update the manifest
+					target._manifest = manifest || {};
 
+					// iterate through the dependencies and create new targets
+					(deps || []).forEach(bundle.add.bind(bundle));
+
+					// trigger the callback
 					itemCallback(err);
 				});
 			});

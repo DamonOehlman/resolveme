@@ -16,16 +16,24 @@ function versionSort(a, b) {
 
 function findItem(target, opts, callback) {
 	var fileType = (opts.fileType || 'js').replace(reLeadingDot, ''),
-		modulePath = opts.repository || path.resolve(opts.cwd, 'modules'),
 		pathIdx = 0, itemPath,
-		locations;
+		locations = [],
+		modulePath = opts.repository || path.resolve(opts.cwd, 'modules'),
+		reader = fstream.Reader({
+			path: modulePath,
+			filter: function(entry) {
+				return entry.depth === 0 || (entry.depth <= 1 && entry.basename.indexOf(target.name) === 0);
+			}
+		});
 
-	// glob for modules
-	glob(path.join(modulePath, target.name + '*'), function(err, files) {
-		if (err) return callback(err);
+	reader.on('entry', function(entry) {
+		locations.push(entry.path);
+	});
 
+	reader.on('error', callback);
+	reader.on('end', function() {
 		// extract the locations
-		locations = files.map(function(file) {
+		locations = locations.map(function(file) {
 			var match = reSemVer.exec(file) || [];
 
 			return {
@@ -60,8 +68,9 @@ exports.exists = function(item, opts, callback) {
 
 exports.retrieve = function(item, opts, callback) {
 	var manifest = new Manifest(item.name, item._location),
-		reader,
-		entries = [];
+		data, reader,
+		entries = [],
+		dependencies = [];
 
 	// determine whether we are dealing with a single file or directory
 	debug('retrieving: ' + item._location);
@@ -84,6 +93,9 @@ exports.retrieve = function(item, opts, callback) {
 
 			reader.on('entry', function(entry) {
 				if (entry.type === 'File') {
+					// TODO: only push parts that are relevant
+					// any images
+					// css/js with name matching either the main file or matching module
 					entries.push(entry.path);
 				}
 			});
@@ -95,11 +107,14 @@ exports.retrieve = function(item, opts, callback) {
 
 					// add each of the buffers to the manifest
 					results.forEach(function(data, index) {
-						manifest.add(data, entries[index]);
+						data = manifest.add(data, entries[index]);
+
+						// push the additional dependencies
+						dependencies = dependencies.concat(data.dependencies);
 					});
 
 					// pass back the manifest
-					callback(err, manifest);
+					callback(err, manifest, dependencies);
 				});
 			});
 
