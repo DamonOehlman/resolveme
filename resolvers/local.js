@@ -6,6 +6,7 @@ var async = require('async'),
 	path = require('path'),
 	semver = require('semver'),
 	Manifest = require('../manifest'),
+	defaultDeps = require('../dependencies'),
 	reLeadingDot = /^\./,
 	reSemVer = /^.*((?:\d+|x)\.(?:\d+|x)\.(?:\d+|x)).*$/,
 	reSemVerAny = /(?:(\.)x(\.?)|(\.?)x(\.))/;
@@ -67,9 +68,16 @@ exports.exists = function(item, opts, callback) {
 };
 
 exports.retrieve = function(item, opts, callback) {
-	var manifest, data, reader,
-		entries = [],
-		dependencies = [];
+	var manifest, data, reader, dependencies,
+		entries = [];
+
+	// initialize the default dependencies
+	if (defaultDeps[item.name + '.' + item.version]) {
+		dependencies = defaultDeps[item.name + '.' + item.version];
+	}
+	else {
+		dependencies = defaultDeps[item.name] || [];
+	}
 
 	// determine whether we are dealing with a single file or directory
 	debug('retrieving: ' + item._location);
@@ -120,7 +128,8 @@ exports.retrieve = function(item, opts, callback) {
 					results.forEach(function(data, index) {
 						data = manifest.add(data, entries[index]);
 
-						// push the additional dependencies
+						// push the additional (discovered) dependencies
+						// NOTE: resolveme will deal with dependencies being added twice properly
 						dependencies = dependencies.concat(data.dependencies);
 					});
 
