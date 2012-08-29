@@ -18,7 +18,7 @@ Manifest.prototype = {
 			data = {
 				content: content,
 				dependencies: [],
-				fileType: match[3],
+				fileType: (match[3] || '').toLowerCase(),
 				name: match[1]
 			},
 			results;
@@ -47,7 +47,20 @@ Manifest.prototype = {
 	},
 
 	getContent: function(fileType) {
-		console.log(_.pluck(this.items, 'fileType'));
+		var contents = '';
+
+		// if the filetype is not defined, and we only have one item use that filetype
+		fileType = (fileType || (items[0] || {}).fileType).toLowerCase();
+
+		// return the contents of each of the items matching the specified filetype
+		this.items.forEach(function(item) {
+			// if the item filetype matches the requested filetype add the content
+			if (item.fileType === fileType) {
+				content += item.content;
+			}
+		});
+
+		return content;
 	}
 };
 

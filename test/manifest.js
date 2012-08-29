@@ -36,6 +36,9 @@ describe('manifest creation tests', function() {
 		assert.equal(data.name, 'underscore');
 		assert.equal(data.fileType, 'js');
 		assert.equal(data.content, 'function _() {}');
+
+		// check the manifest content
+		assert.equal(m.getContent(), 'function _() {}');
 	});
 
 	it('should be able to handle versioned library names', function() {
