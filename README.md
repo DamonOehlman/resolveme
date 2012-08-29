@@ -8,9 +8,9 @@ The `resolveme` module makes it much simpler to incorporate web resources into y
 There are two types of repository structure that resolveme can work with, either:
 
 - a strict repository structure where modules are stored in versioned directories; or,
-- a loose repository structure where modules are stored as simple file references
+- a relaxed repository structure where modules are stored as simple file references
 
-Additionally, a mixture of the two structures can be used, however, it should be noted that if a strict structure is detected for a particular module, and a loose equivalent of the module will always be ignored.
+Additionally, a mixture of the two structures can be used, however, it should be noted that if a strict structure is detected for a particular module, and a relaxed equivalent of the module will always be ignored.
 
 Let's walk through a couple of structure examples:
 
@@ -39,7 +39,7 @@ As each of these libraries is a simple JS library, then each of the folders will
 
 It should also be noted that for single-file libraries, that you can skip including the folder and simply place a [semver] named file in the modules folder also (e.g. `backbone.0.9.2.js`).
 
-### Example 2: Loose Structure
+### Example 2: Relaxed Structure
 
 If the above structure seems too heavy and convoluted for you, then you can do away with version numbers all together and use a loose directory structure instead:
 

@@ -67,8 +67,7 @@ exports.exists = function(item, opts, callback) {
 };
 
 exports.retrieve = function(item, opts, callback) {
-	var manifest = new Manifest(item.name, item._location),
-		data, reader,
+	var manifest, data, reader,
 		entries = [],
 		dependencies = [];
 
@@ -79,16 +78,27 @@ exports.retrieve = function(item, opts, callback) {
 
 		// if we have a file, then get the location information
 		if (stats.isFile()) {
+			// create the manifest
+			manifest = new Manifest(item.name, path.dirname(item._location)),
+
+			debug('reading file: ' + item._location);
 			fs.readFile(item._location, function(err, data) {
 				if (! err) {
-					manifest.add(data, item._location);
+					data = manifest.add(data, item._location);
+
+					// push the additional dependencies
+					dependencies = dependencies.concat(data.dependencies);
 				}
 
-				callback(err, manifest);
+				callback(err, manifest, dependencies);
 			});
 		}
 		// otherwise, if this is a directory
 		else if (stats.isDirectory()) {
+			// create the manifest
+			manifest = new Manifest(item.name, item._location);
+
+			// create the reader to read files from the target location
 			reader = fstream.Reader({ path: item._location });
 
 			reader.on('entry', function(entry) {
@@ -96,6 +106,7 @@ exports.retrieve = function(item, opts, callback) {
 					// TODO: only push parts that are relevant
 					// any images
 					// css/js with name matching either the main file or matching module
+					debug('found entry: ' + entry.path);
 					entries.push(entry.path);
 				}
 			});

@@ -1,4 +1,5 @@
-var findme = require('findme'),
+var debug = require('debug')('resolveme'),
+	findme = require('findme'),
 	_ = require('underscore'),
 	reNameParts = /^.*\/([\w\-]+)\.?(.*)$/,
 	reParsableExts = /(?:js|css)$/;
@@ -24,6 +25,7 @@ Manifest.prototype = {
 
 		// if we have a file type that should be scanned for dependencies do that now
 		if (reParsableExts.test(data.fileType)) {
+			debug('parsing file for deps: ' + path);
 			results = findme(data.content.toString('utf8'));
 
 			data.content = results.content;

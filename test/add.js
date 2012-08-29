@@ -2,6 +2,30 @@ var assert = require('assert'),
 	resolveme = require('..');
 
 describe('adding requirements checks', function() {
+	it('should reject empty adds (undefined value)', function() {
+		var bundle = resolveme();
+
+		bundle.add();
+
+		assert.equal(bundle.targets.length, 0);
+	});
+
+	it('should reject empty adds (empty string)', function() {
+		var bundle = resolveme();
+
+		bundle.add('');
+
+		assert.equal(bundle.targets.length, 0);
+	});
+
+	it('should reject empty adds (empty string - needing trimming)', function() {
+		var bundle = resolveme();
+
+		bundle.add('   ');
+
+		assert.equal(bundle.targets.length, 0);
+	});
+
 	it('should be able to add a single requirement to a bundle', function() {
 		var bundle = resolveme();
 

@@ -40,12 +40,17 @@ Bundle.prototype._locate = function(target, opts, callback) {
 };
 
 Bundle.prototype.add = function(target) {
+	// if the target is empty, return this
+	if (! target) return this;
+
 	if (typeof target == 'string' || (target instanceof String)) {
-		target = new findme.Requirement(target);
+		target = new findme.Requirement(target.trim());
 	}
 
 	// add the target to the targets list
-	this.targets.push(target);
+	if (target && target.name) {
+		this.targets.push(target);
+	}
 
 	return this;
 };
