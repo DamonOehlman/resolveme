@@ -71,4 +71,10 @@ Manifest.prototype = {
 	}
 };
 
+Object.defineProperty(Manifest.prototype, 'fileTypes', {
+	get: function() {
+		return _.uniq(_.pluck(this.items, 'fileType').sort(), true);
+	}
+});
+
 module.exports = Manifest;

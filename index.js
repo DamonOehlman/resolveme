@@ -4,6 +4,7 @@ var async = require('async'),
 	debug = require('debug')('resolveme'),
 	localResolver = require('./resolvers/local'),
 	util = require('util'),
+	_ = require('underscore'),
 	reCommaDelim = /\,\s*/;
 
 /* private helpers */
@@ -58,7 +59,7 @@ Bundle.prototype.resolve = function(opts, callback) {
 	// find the targets that still required resolution	
 	var bundle = this,
 		targets = this.targets.filter(function(target) {
-			return target && typeof target._manifest == 'undefined';
+			return target && typeof target.manifest == 'undefined';
 		});
 
 	// if we have no targets, then trigger the callback and exit
@@ -79,7 +80,7 @@ Bundle.prototype.resolve = function(opts, callback) {
 
 				resolver.retrieve(target, opts, function(err, manifest, deps) {
 					// update the manifest
-					target._manifest = manifest || {};
+					target.manifest = manifest || {};
 
 					// iterate through the dependencies and create new targets
 					(deps || []).forEach(bundle.add.bind(bundle));
@@ -97,6 +98,20 @@ Bundle.prototype.resolve = function(opts, callback) {
 		}
 	);
 };
+
+Object.defineProperty(Bundle.prototype, 'fileTypes', {
+	get: function() {
+		var fileTypes = [];
+
+		this.targets.forEach(function(target) {
+			if (target.manifest) {
+				fileTypes = fileTypes.concat(target.manifest.fileTypes);
+			}
+		});
+
+		return _.uniq(fileTypes.sort(), true);
+	}
+});
 
 /* main */
 

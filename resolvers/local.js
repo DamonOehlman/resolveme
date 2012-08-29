@@ -22,7 +22,7 @@ function findItem(target, opts, callback) {
 		reItemMatch = new RegExp('^' + target.name + '(\.' + reSemVer.source + ')?'),
 		reItemMatches = {
 			'Directory': new RegExp(reItemMatch.source + '$', 'i'),
-			'File': new RegExp(reItemMatch.source + '\\.\\w+$', 'i')
+			'File': new RegExp(reItemMatch.source + '\\.' + fileType + '$', 'i')
 		},
 		reader;
 
