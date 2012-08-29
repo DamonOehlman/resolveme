@@ -21,6 +21,17 @@ describe('local resolution tests', function() {
 				});
 			});
 
+			it('should be able to find a local copy of jquery', function(done) {
+				resolveme('jquery', { repository: value }, function(err, bundle) {
+					assert.ifError(err);
+					assert.equal(bundle.targets.length, 1);
+					assert.equal(bundle.targets[0].name, 'jquery');
+
+					// console.log(require('util').inspect(bundle.targets, true, null, true));
+					done();
+				});
+			});
+
 			it('should be able to find a local copy of registry', function(done) {
 				resolveme('registry', { repository: value }, function(err, bundle) {
 					assert.ifError(err);

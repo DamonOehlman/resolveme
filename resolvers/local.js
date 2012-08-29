@@ -7,7 +7,7 @@ var async = require('async'),
 	Manifest = require('../manifest'),
 	defaultDeps = require('../dependencies'),
 	reLeadingDot = /^\./,
-	reSemVer = /^.*((?:\d+|x)\.(?:\d+|x)\.(?:\d+|x)).*$/,
+	reSemVer = /((?:\d+|x)\.(?:\d+|x)\.(?:\d+|x))/,
 	reSemVerAny = /(?:(\.)x(\.?)|(\.?)x(\.))/;
 
 function versionSort(a, b) {
@@ -19,8 +19,14 @@ function findItem(target, opts, callback) {
 		pathIdx = 0, itemPath,
 		locations = [],
 		modulePath = opts.repository || path.resolve(opts.cwd, 'modules'),
+		reItemMatch = new RegExp('^' + target.name + '(\.' + reSemVer.source + ')?'),
+		reItemMatches = {
+			'Directory': new RegExp(reItemMatch.source + '$', 'i'),
+			'File': new RegExp(reItemMatch.source + '\\.\\w+$', 'i')
+		},
 		reader;
 
+	debug('looking for "' + target + '" in module path: ' + modulePath);
 	path.exists(modulePath, function(exists) {
 		// if the module path does not exists, then exit
 		if (! exists) return callback(new Error('Invalid module path: ' + modulePath));
@@ -28,7 +34,8 @@ function findItem(target, opts, callback) {
 		reader = fstream.Reader({
 			path: modulePath,
 			filter: function(entry) {
-				return entry.depth === 0 || (entry.depth <= 1 && entry.basename.indexOf(target.name) === 0);
+				return entry.depth === 0 || 
+					(entry.depth <= 1 && reItemMatches[entry.type].test(entry.basename));
 			}
 		});
 
