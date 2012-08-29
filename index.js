@@ -74,6 +74,7 @@ Bundle.prototype.resolve = function(opts, callback) {
 
 		function(target, itemCallback) {
 			bundle._locate(target, opts, function(resolver) {
+				// if we didn't get a resolver report that too
 				if (! resolver) return callback(new Error('unable to resolve: ' + target));
 
 				resolver.retrieve(target, opts, function(err, manifest, deps) {

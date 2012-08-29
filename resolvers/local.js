@@ -19,6 +19,12 @@ function findItem(target, opts, callback) {
 		pathIdx = 0, itemPath,
 		locations = [],
 		modulePath = opts.repository || path.resolve(opts.cwd, 'modules'),
+		reader;
+
+	path.exists(modulePath, function(exists) {
+		// if the module path does not exists, then exit
+		if (! exists) return callback(new Error('Invalid module path: ' + modulePath));
+
 		reader = fstream.Reader({
 			path: modulePath,
 			filter: function(entry) {
@@ -26,37 +32,38 @@ function findItem(target, opts, callback) {
 			}
 		});
 
-	reader.on('entry', function(entry) {
-		locations.push(entry.path);
-	});
+		reader.on('entry', function(entry) {
+			locations.push(entry.path);
+		});
 
-	reader.on('error', callback);
-	reader.on('end', function() {
-		// extract the locations
-		locations = locations.map(function(file) {
-			var match = reSemVer.exec(file) || [];
+		reader.on('error', callback);
+		reader.on('end', function() {
+			// extract the locations
+			locations = locations.map(function(file) {
+				var match = reSemVer.exec(file) || [];
 
-			return {
-				path: file,
-				version: match[1]
-			};
-		}).sort(versionSort);
+				return {
+					path: file,
+					version: match[1]
+				};
+			}).sort(versionSort);
 
-		// filter out valid versions
-		if (target.version && target.version !== 'latest') {
-			locations = locations.filter(function(location) {
-				semver.satisfies(location.version, target.version)
-			});
-		}
+			// filter out valid versions
+			if (target.version && target.version !== 'latest') {
+				locations = locations.filter(function(location) {
+					semver.satisfies(location.version, target.version)
+				});
+			}
 
-		debug('found ' + locations.length + ' potential matching locations');
+			debug('found ' + locations.length + ' potential matching locations');
 
-		// if we have no locations then return an error
-		if (locations.length == 0) return callback(new Error('Cannot find target: ' + target));
+			// if we have no locations then return an error
+			if (locations.length == 0) return callback(new Error('Cannot find target: ' + target));
 
-		debug('location set to: ' + locations[0].path);
-		target._location = locations[0].path;
-		callback();
+			debug('location set to: ' + locations[0].path);
+			target._location = locations[0].path;
+			callback();
+		});
 	});
 }
 
