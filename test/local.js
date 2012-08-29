@@ -47,6 +47,9 @@ describe('local resolution tests', function() {
 					assert.ifError(err);
 					assert.equal(bundle.targets.length, 3);
 
+					// assert the bundle has content
+					assert(bundle.getContent());
+
 					done();
 				});
 			});
@@ -55,6 +58,9 @@ describe('local resolution tests', function() {
 				resolveme('leaflet', { repository: value }, function(err, bundle) {
 					assert.ifError(err);
 					assert.equal(bundle.targets.length, 1);
+
+					// assert the bundle has content
+					assert(bundle.getContent());
 
 					// validate that we have all three parts of leaflet present
 					// NOTE: the relaxed repository form will automatically resolve the 
