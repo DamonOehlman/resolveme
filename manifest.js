@@ -1,9 +1,15 @@
 var debug = require('debug')('resolveme'),
 	findme = require('findme'),
 	_ = require('underscore'),
+	resolveme = require('./'),
 	reNameParts = /^(?:.*\/)?([\w\-]+)(\.\d+\.\d+\.\d+)?\.?(.*)$/,
 	reParsableExts = /(?:js|css)$/,
-	reLeadingDot = /^\./;
+	reLeadingDot = /^\./,
+	fileSeparators = {
+		js: '\n;',
+		'default': '\n'
+	};
+
 
 function Manifest(name, basePath) {
 	this.name = name;
@@ -67,7 +73,7 @@ Manifest.prototype = {
 			}
 		});
 
-		return contents.join('\n;');
+		return contents.join(getFileSeparator(fileType));
 	}
 };
 
@@ -77,4 +83,13 @@ Object.defineProperty(Manifest.prototype, 'fileTypes', {
 	}
 });
 
-module.exports = Manifest;
+/* helper functions */
+
+function getFileSeparator(fileType) {
+	return fileSeparators[fileType] || fileSeparators['default'];
+}
+
+/* exports */
+
+exports.Manifest = Manifest;
+exports.getFileSeparator = getFileSeparator;

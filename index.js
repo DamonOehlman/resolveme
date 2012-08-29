@@ -3,6 +3,7 @@ var async = require('async'),
 	events = require('events'),
 	debug = require('debug')('resolveme'),
 	localResolver = require('./resolvers/local'),
+	getFileSeparator = require('./manifest').getFileSeparator,
 	util = require('util'),
 	_ = require('underscore'),
 	reCommaDelim = /\,\s*/;
@@ -62,6 +63,14 @@ Bundle.prototype.add = function(target) {
 	}
 
 	return this;
+};
+
+Bundle.prototype.getContent = function(fileType) {
+	var items = this.targets.map(function(target) {
+		return target.manifest.getContent(fileType);
+	});
+
+	return items.join(getFileSeparator(fileType));
 };
 
 Bundle.prototype.resolve = function(opts, callback) {

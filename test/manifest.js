@@ -1,6 +1,6 @@
 var assert = require('assert'),
 	resolveme = require('..'),
-	Manifest = require('../manifest');
+	Manifest = require('../manifest').Manifest;
 
 function defineDummyUnderscore() {
 	var m = new Manifest('underscore', '/tmp/modules');
@@ -33,6 +33,7 @@ describe('manifest creation tests', function() {
 		assert.equal(data.name, 'underscore');
 		assert.equal(data.fileType, 'js');
 		assert.equal(data.content, 'function _() {}');
+		assert.equal(m.getContent(), 'function _() {}');
 	});
 
 	it('should be able to add content to a manifest with a basepath', function() {
