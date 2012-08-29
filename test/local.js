@@ -6,7 +6,15 @@ describe('local resolution tests', function() {
 		resolveme('underscore', { cwd: __dirname }, function(err, bundle) {
 			assert.ifError(err);
 
-			console.log(bundle);
+			done();
+		});
+	});
+
+	it('should be able to find a local copy of registry', function(done) {
+		resolveme('registry', { cwd: __dirname }, function(err, bundle) {
+			assert.ifError(err);
+
+			// console.log(require('util').inspect(bundle.targets, true, null, true));
 			done();
 		});
 	});
