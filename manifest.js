@@ -2,10 +2,10 @@ var debug = require('debug')('resolveme'),
 	findme = require('findme'),
 	_ = require('underscore'),
 	resolveme = require('./'),
-	reNameParts = /^(.*\/)?([\w\-]+)(\.\d+\.\d+\.\d+)?\.?(.*)$/,
+	reNameParts = /^(.*[\/\\])?([\w\-]+)(\.\d+\.\d+\.\d+)?\.?(.*)$/,
 	reParsableExts = /(?:js|css)$/,
 	reLeadingDot = /^\./,
-	reLeadingSlash = /^\//,
+	reLeadingSlash = /^[\/\\]/,
 	fileSeparators = {
 		js: '\n;',
 		'default': '\n'
