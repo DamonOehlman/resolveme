@@ -68,6 +68,18 @@ describe('local resolution tests', function() {
 					done();
 				});
 			});
+
+			it('should be able to find a local copy of handlebars', function(done) {
+				resolveme('handlebars', { repository: value }, function(err, bundle) {
+					assert.ifError(err);
+					assert.equal(bundle.targets.length, 1);
+					assert.equal(bundle.targets[0].name, 'handlebars');
+
+					// console.log(require('util').inspect(bundle.targets, true, null, true));
+					done();
+
+				});
+			});
 		});
 	});
 

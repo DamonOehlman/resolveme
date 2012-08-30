@@ -6,20 +6,18 @@ var async = require('async'),
 	semver = require('semver'),
 	Manifest = require('../manifest').Manifest,
 	defaultDeps = require('../dependencies'),
-	reLeadingDot = /^\./,
-	reSemVer = /((?:\d+|x)\.(?:\d+|x)\.(?:\d+|x))/,
-	reSemVerAny = /(?:(\.)x(\.?)|(\.?)x(\.))/;
+	regexes = require('./regexes');
 
 function versionSort(a, b) {
 	return semver.rcompare(a.version, b.version);
 }
 
 function findItem(target, opts, callback) {
-	var fileType = (opts.fileType || 'js').replace(reLeadingDot, ''),
+	var fileType = (opts.fileType || 'js').replace(regexes.leadingDot, ''),
 		pathIdx = 0, itemPath,
 		locations = [],
 		modulePath = opts.repository || path.resolve(opts.cwd, 'modules'),
-		reItemMatch = new RegExp('^' + target.name + '(\.' + reSemVer.source + ')?'),
+		reItemMatch = new RegExp('^' + target.name + '(\.' + regexes.semver.source + ')?'),
 		reItemMatches = {
 			'Directory': new RegExp(reItemMatch.source + '$', 'i'),
 			'File': new RegExp(reItemMatch.source + '\\.' + fileType + '$', 'i')
@@ -47,7 +45,7 @@ function findItem(target, opts, callback) {
 		reader.on('end', function() {
 			// extract the locations
 			locations = locations.map(function(file) {
-				var match = reSemVer.exec(file) || [];
+				var match = regexes.semver.exec(file) || [];
 
 				return {
 					path: file,
