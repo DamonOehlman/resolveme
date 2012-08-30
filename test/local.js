@@ -2,8 +2,8 @@ var assert = require('assert'),
 	resolveme = require('..'),
 	path = require('path'),
 	repositories = {
-		'relaxed': path.resolve(__dirname, 'modules-relaxed'),
-		'strict': path.resolve(__dirname, 'modules-strict'),
+		// 'relaxed': path.resolve(__dirname, 'modules-relaxed'),
+		// 'strict': path.resolve(__dirname, 'modules-strict'),
 		'mixed': path.resolve(__dirname, 'modules')
 	},
 	_ = require('underscore');
@@ -103,6 +103,29 @@ describe('local resolution tests', function() {
 					assert(manifest.get('img/glyphicons-halflings.png'));
 
 					// console.log(require('util').inspect(bundle.targets[0].manifest, true, null, true));
+					done();
+
+				});
+			});
+
+			it('should be able to find a copy of mapcontrols (just core)', function(done) {
+				resolveme('mapcontrols', { repository: value }, function(err, bundle) {
+					var manifest;
+
+					assert.ifError(err);
+
+					assert.equal(bundle.targets.length, 4);
+					assert.equal(bundle.targets[0].name, 'mapcontrols');
+
+					// get a copy of the manifest
+					manifest = bundle.targets[0].manifest;
+
+					// ensure we have mapcontrols.js 
+					assert(manifest.get('mapcontrols.js'));
+
+					// ensure we don't have the zoom plugin
+					assert.equal(manifest.get('zoom.js'), undefined);
+
 					done();
 
 				});

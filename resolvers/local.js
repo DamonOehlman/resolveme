@@ -102,7 +102,7 @@ exports.retrieve = function(item, opts, callback) {
 		// if we have a file, then get the location information
 		if (stats.isFile()) {
 			// create the manifest
-			manifest = new Manifest(item.name, path.dirname(item._location)),
+			manifest = new Manifest(item, path.dirname(item._location));
 
 			debug('reading file: ' + item._location);
 			fs.readFile(item._location, function(err, data) {
@@ -119,7 +119,7 @@ exports.retrieve = function(item, opts, callback) {
 		// otherwise, if this is a directory
 		else if (stats.isDirectory()) {
 			// create the manifest
-			manifest = new Manifest(item.name, item._location);
+			manifest = new Manifest(item, item._location);
 
 			// create the reader to read files from the target location
 			reader = fstream.Reader({ path: item._location, filter: ignoreInvalidFiles });

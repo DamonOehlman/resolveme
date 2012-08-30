@@ -1,0 +1,48 @@
+.mc-zoom {
+  background: url("../images/zoom.png");
+  width: 24px;
+  height: 200px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.mc-zoom-btn {
+  height: 14px;
+  margin: 1px 0;
+  display: block;
+  cursor: pointer;
+}
+.mc-zoom-btn-in {
+  background: url("../images/zoom.png") 0 -264px no-repeat;
+}
+.mc-zoom-btn-in:hover {
+  background-position: 0 -248px;
+}
+.mc-zoom-btn-in:active {
+  background-position: 0 -280px;
+}
+.mc-zoom-btn-out {
+  background: url("../images/zoom.png") 0 -312px no-repeat;
+  margin-top: 14px;
+}
+.mc-zoom-btn-out:hover {
+  background-position: 0 -296px;
+}
+.mc-zoom-btn-out:active {
+  background-position: 0 -328px;
+}
+.mc-zoom-slider {
+  height: 154px;
+}
+.mc-zoom-thumb {
+  height: 16px;
+  background: url("../images/zoom.png") 0 -200px no-repeat;
+  display: block;
+  position: absolute;
+  width: 100%;
+  cursor: pointer;
+}
+.mc-zoom-thumb:active {
+  cursor: row-resize;
+}

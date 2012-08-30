@@ -12,8 +12,16 @@ var debug = require('debug')('resolveme'),
 	};
 
 
-function Manifest(name, basePath) {
-	this.name = name;
+function Manifest(target, basePath) {
+	// if the name is a string, then initialise the name from the string
+	if (typeof target == 'string' || (target instanceof String)) {
+		this.name = target;
+	}
+	else {
+		_.extend(this, target);
+	}
+
+	// initialise the basepath
 	this.basePath = basePath || '';
 
 	// initialise the items
@@ -21,7 +29,7 @@ function Manifest(name, basePath) {
 }
 
 Manifest.prototype = {
-	add: function(content, path) {
+	add: function(content, path, force) {
 		var targetPath = path.slice(this.basePath.length).replace(reLeadingSlash, ''),
 			match = reNameParts.exec(targetPath) || [],
 			data = {
@@ -30,6 +38,17 @@ Manifest.prototype = {
 				fileType: (match[4] || '').toLowerCase(),
 				name: match[2],
 			},
+
+			// determine whether this file is a resource
+			// at this stage this is determined on whether or not we 
+			// can parse the file which matches js, css files only
+			isResource = !reParsableExts.test(data.fileType),
+
+			// determine whether the specified file is allowed to be added to the manifest
+			// our initial check permits resources or files that exactly match the name
+			// of the manifest, and additionally the third arg of this function provides
+			// a mechanism for overriding all checks and adding the resource
+			allowAdd = force || isResource || this.name.toLowerCase() === data.name.toLowerCase(),
 			results;
 
 		// add a path attribute to the data
@@ -37,6 +56,14 @@ Manifest.prototype = {
 
 		// convert backslashes to forward slashes for resolving an item
 		data.path = data.path.replace(/\\/g, '/');
+
+		// checks to see if it should actually be added, we should only add the file if:
+		//
+		// - it's name is an exact match for the module name
+		// - the name of the file is a match for a module selected specified in the target 
+
+		// if we are not allowed to add this file, then abort
+		if (! allowAdd) return;
 
 		// if we have a file type that should be scanned for dependencies do that now
 		if (reParsableExts.test(data.fileType)) {
