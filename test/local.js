@@ -80,6 +80,33 @@ describe('local resolution tests', function() {
 
 				});
 			});
+
+			it('should be able to find a local copy of bootstrap', function(done) {
+				resolveme('bootstrap', { repository: value }, function(err, bundle) {
+					var manifest;
+
+					assert.ifError(err);
+
+					assert.equal(bundle.targets.length, 1);
+					assert.equal(bundle.targets[0].name, 'bootstrap');
+
+					// get a copy of the manifest
+					manifest = bundle.targets[0].manifest;
+
+					// ensure we have 4 items (1 js, 1 css, 2 images)
+					assert.equal(manifest.paths.length, 4);
+
+					// run some checks on the manifest
+					assert(manifest.get('bootstrap.js'));
+					assert(manifest.get('css/bootstrap.css'));
+					assert(manifest.get('img/glyphicons-halflings-white.png'));
+					assert(manifest.get('img/glyphicons-halflings.png'));
+
+					// console.log(require('util').inspect(bundle.targets[0].manifest, true, null, true));
+					done();
+
+				});
+			});
 		});
 	});
 

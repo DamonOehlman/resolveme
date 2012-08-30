@@ -89,4 +89,18 @@ describe('manifest creation tests', function() {
 		// check the manifest content
 		assert.equal(m.getContent('.js'), 'function _() {}\n;var _s = {};');
 	});
+
+	it('should validate that the paths member of the manifest equals the number of items added', function() {
+		var m = defineDummyUnderscore();
+
+		assert.equal(m.paths.length, 2);
+	});
+
+	it('should be able to get a specific resource from the manifest', function() {
+		var m = defineDummyUnderscore();
+
+		// check that we can get underscore out
+		assert(m.get('underscore.js'));
+		assert(m.get('underscore-string.js'));
+	});
 });

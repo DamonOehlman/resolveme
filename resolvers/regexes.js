@@ -6,3 +6,6 @@ exports.semver = /((?:\d+|x)\.(?:\d+|x)\.(?:\d+|x))(-[0-9]+-?)?([a-zA-Z-][a-zA-Z
 
 // semver replace with 
 exports.semverAny = /(?:(\.)x(\.?)|(\.?)x(\.))/;
+
+// ignore files
+exports.fileIgnore = /(.ds_store$)/i;

@@ -12,6 +12,10 @@ function versionSort(a, b) {
 	return semver.rcompare(a.version, b.version);
 }
 
+function ignoreInvalidFiles(entry) {
+	return ! regexes.fileIgnore.test(entry.path);
+}
+
 function findItem(target, opts, callback) {
 	var fileType = (opts.fileType || 'js').replace(regexes.leadingDot, ''),
 		pathIdx = 0, itemPath,
@@ -118,9 +122,9 @@ exports.retrieve = function(item, opts, callback) {
 			manifest = new Manifest(item.name, item._location);
 
 			// create the reader to read files from the target location
-			reader = fstream.Reader({ path: item._location });
+			reader = fstream.Reader({ path: item._location, filter: ignoreInvalidFiles });
 
-			reader.on('entry', function(entry) {
+			reader.on('child', function(entry) {
 				if (entry.type === 'File') {
 					// TODO: only push parts that are relevant
 					// any images

@@ -2,9 +2,10 @@ var debug = require('debug')('resolveme'),
 	findme = require('findme'),
 	_ = require('underscore'),
 	resolveme = require('./'),
-	reNameParts = /^(?:.*\/)?([\w\-]+)(\.\d+\.\d+\.\d+)?\.?(.*)$/,
+	reNameParts = /^(.*\/)?([\w\-]+)(\.\d+\.\d+\.\d+)?\.?(.*)$/,
 	reParsableExts = /(?:js|css)$/,
 	reLeadingDot = /^\./,
+	reLeadingSlash = /^\//,
 	fileSeparators = {
 		js: '\n;',
 		'default': '\n'
@@ -21,14 +22,18 @@ function Manifest(name, basePath) {
 
 Manifest.prototype = {
 	add: function(content, path) {
-		var match = reNameParts.exec(path.slice(this.basePath.length)) || [],
+		var targetPath = path.slice(this.basePath.length).replace(reLeadingSlash, ''),
+			match = reNameParts.exec(targetPath) || [],
 			data = {
 				content: content,
 				dependencies: [],
-				fileType: (match[3] || '').toLowerCase(),
-				name: match[1]
+				fileType: (match[4] || '').toLowerCase(),
+				name: match[2],
 			},
 			results;
+
+		// add a path attribute to the data
+		data.path = (match[1] || '') + data.name + (data.fileType ? '.' + data.fileType : '');
 
 		// if we have a file type that should be scanned for dependencies do that now
 		if (reParsableExts.test(data.fileType)) {
@@ -51,6 +56,14 @@ Manifest.prototype = {
 
 		// return the data
 		return data;
+	},
+
+	get: function(name) {
+		var matching = this.items.filter(function(item) {
+			return item.path.toLowerCase() === name.toLowerCase();
+		});
+
+		return matching[0];
 	},
 
 	getContent: function(fileType) {
@@ -76,6 +89,12 @@ Manifest.prototype = {
 		return contents.join(getFileSeparator(fileType));
 	}
 };
+
+Object.defineProperty(Manifest.prototype, 'paths', {
+	get: function() {
+		return _.pluck(this.items, 'path');
+	}
+});
 
 Object.defineProperty(Manifest.prototype, 'fileTypes', {
 	get: function() {
