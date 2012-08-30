@@ -63,12 +63,8 @@ describe('local resolution tests', function() {
 					assert(bundle.getContent());
 
 					// validate that we have all three parts of leaflet present
-					// NOTE: the relaxed repository form will automatically resolve the 
-					// primary .js file and ignore supporting files.  This might be 
-					// something that will be resolved in the future but for the moment
-					// I consider this acceptable functionality.
-					assert.equal(bundle.targets[0].manifest.items.length, key == 'relaxed' ? 1 : 3);
-					assert.equal(bundle.fileTypes.length, key == 'relaxed' ? 1 : 3);
+					assert.equal(bundle.targets[0].manifest.items.length, 3);
+					assert.equal(bundle.fileTypes.length, 3);
 					done();
 				});
 			});
