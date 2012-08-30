@@ -154,6 +154,9 @@ function resolveme(targets, opts, callback) {
 	if (bundle.targets.length > 0) {
 		bundle.resolve(opts, callback);
 	}
+	else if (callback) {
+		callback(null, bundle);
+	}
 
 	// return the scope which passes on useful events
 	return bundle;
