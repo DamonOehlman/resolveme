@@ -35,6 +35,9 @@ Manifest.prototype = {
 		// add a path attribute to the data
 		data.path = (match[1] || '') + data.name + (data.fileType ? '.' + data.fileType : '');
 
+		// convert backslashes to forward slashes for resolving an item
+		data.path = data.path.replace(/\\/g, '/');
+
 		// if we have a file type that should be scanned for dependencies do that now
 		if (reParsableExts.test(data.fileType)) {
 			debug('parsing file for deps: ' + path);
