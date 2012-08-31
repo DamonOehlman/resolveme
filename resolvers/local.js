@@ -21,7 +21,9 @@ function findItem(target, opts, callback) {
 		pathIdx = 0, itemPath,
 		locations = [],
 		modulePath = opts.repository || path.resolve(opts.cwd, 'modules'),
-		reItemMatch = new RegExp('^' + target.name + '(\.' + regexes.semver.source + ')?'),
+		reItemMatch = new RegExp('^' + 
+			target.name.replace(regexes.invalidNameParts, '') +
+			'(\.' + regexes.semver.source + ')?'),
 		reItemMatches = {
 			'Directory': new RegExp(reItemMatch.source + '$', 'i'),
 			'File': new RegExp(reItemMatch.source + '\\.' + fileType + '$', 'i')
@@ -110,7 +112,9 @@ exports.retrieve = function(item, opts, callback) {
 					data = manifest.add(data, item._location);
 
 					// push the additional dependencies
-					dependencies = dependencies.concat(data.dependencies);
+					if (data) {
+						dependencies = dependencies.concat(data.dependencies);
+					}
 				}
 
 				callback(err, manifest, dependencies);
@@ -144,8 +148,9 @@ exports.retrieve = function(item, opts, callback) {
 						data = manifest.add(data, entries[index]);
 
 						// push the additional (discovered) dependencies
-						// NOTE: resolveme will deal with dependencies being added twice properly
-						dependencies = dependencies.concat(data.dependencies);
+						if (data) {
+							dependencies = dependencies.concat(data.dependencies);
+						}
 					});
 
 					// pass back the manifest

@@ -24,6 +24,13 @@ describe('manifest creation tests', function() {
 		assert.equal(m.name, 'underscore');
 	});
 
+	it('should strip invalid name characters from a manifest name', function() {
+		var m = new Manifest('spin.js');
+
+		assert(m);
+		assert.equal(m.name, 'spin');
+	});
+
 	it('should be able to add content to a manifest', function() {
 		var m = new Manifest('underscore'),
 			data = m.add('function _() {}', 'underscore.js');
@@ -113,5 +120,54 @@ describe('manifest creation tests', function() {
 
 		// ensure that the underscore-string.js file has been rejected
 		assert(! m.get('underscore-string.js'), 'underscore-string.js module was included, but should have been rejected');
+	});
+
+	it('should include a single extra modules when requested', function() {
+		var m = new Manifest(findme.define('mapcontrols[zoom]'), '/tmp/modules/mapcontrols.0.2.0');
+
+		m.add('function mapcontrols() {}', '/tmp/modules/mapcontrols.0.2.0/mapcontrols.js');
+		m.add('mapcontrols.zoom = {};', '/tmp/modules/mapcontrols.0.2.0/controls/zoom.js');
+		m.add('mapcontrols.scale = {};', '/tmp/modules/mapcontrols.0.2.0/controls/scale.js');
+
+		// check that mapcontrols was added
+		assert(m.get('mapcontrols.js'));
+
+		// check that the zoom control got added too
+		assert(m.get('controls/zoom.js'), 'zoom control was not added even though it was specified');
+
+		// check that the scale control was rejected as it wasn't specified
+		assert(! m.get('controls/scale.js'), 'scale control was not rejected');
+	});
+
+	it('should include multiple extra modules when requested', function() {
+		var m = new Manifest(findme.define('mapcontrols[zoom:scale]'), '/tmp/modules/mapcontrols.0.2.0');
+
+		m.add('function mapcontrols() {}', '/tmp/modules/mapcontrols.0.2.0/mapcontrols.js');
+		m.add('mapcontrols.zoom = {};', '/tmp/modules/mapcontrols.0.2.0/controls/zoom.js');
+		m.add('mapcontrols.scale = {};', '/tmp/modules/mapcontrols.0.2.0/controls/scale.js');
+
+		// check that mapcontrols was added
+		assert(m.get('mapcontrols.js'));
+
+		// check that the zoom control got added too
+		assert(m.get('controls/zoom.js'), 'zoom control was not added even though it was specified');
+
+		// check that the scale control was rejected as it wasn't specified
+		assert(m.get('controls/scale.js'), 'scale control was not added even though it was specified');
+	});
+
+	it('should include supporting css files when a module is requested', function() {
+		var m = new Manifest(findme.define('mapcontrols[zoom]'), '/tmp/modules/mapcontrols.0.2.0');
+
+		m.add('function mapcontrols() {}', '/tmp/modules/mapcontrols.0.2.0/mapcontrols.js');
+		m.add('mapcontrols.zoom = {};', '/tmp/modules/mapcontrols.0.2.0/controls/zoom.js');
+		m.add('/* */', '/tmp/modules/mapcontrols.0.2.0/controls/zoom.css');
+
+		// check that mapcontrols was added
+		assert(m.get('mapcontrols.js'));
+
+		// check that the zoom control got added too
+		assert(m.get('controls/zoom.js'), 'zoom control was not added even though it was specified');
+		assert(m.get('controls/zoom.css'), 'zoom control css was not found');
 	});
 });

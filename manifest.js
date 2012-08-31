@@ -2,7 +2,7 @@ var debug = require('debug')('resolveme'),
 	findme = require('findme'),
 	_ = require('underscore'),
 	resolveme = require('./'),
-	reNameParts = /^(.*[\/\\])?([\w\-]+)(\.\d+\.\d+\.\d+)?\.?(.*)$/,
+	regexes = require('./resolvers/regexes'),
 	reParsableExts = /(?:js|css)$/,
 	reLeadingDot = /^\./,
 	reLeadingSlash = /^[\/\\]/,
@@ -21,6 +21,9 @@ function Manifest(target, basePath) {
 		_.extend(this, target);
 	}
 
+	// strip the invalid name parts from the name
+	this.name = (this.name || '').replace(regexes.invalidNameParts, '');
+
 	// initialise the basepath
 	this.basePath = basePath || '';
 
@@ -31,12 +34,12 @@ function Manifest(target, basePath) {
 Manifest.prototype = {
 	add: function(content, path, force) {
 		var targetPath = path.slice(this.basePath.length).replace(reLeadingSlash, ''),
-			match = reNameParts.exec(targetPath) || [],
+			match = regexes.nameParts.exec(targetPath) || [],
 			data = {
 				content: content,
 				dependencies: [],
 				fileType: (match[4] || '').toLowerCase(),
-				name: match[2],
+				name: match[2]
 			},
 
 			// determine whether this file is a resource
@@ -60,7 +63,10 @@ Manifest.prototype = {
 		// checks to see if it should actually be added, we should only add the file if:
 		//
 		// - it's name is an exact match for the module name
-		// - the name of the file is a match for a module selected specified in the target 
+		// - the name of the file is a match for a module selected specified in the target
+		(this.modules || []).forEach(function(module) {
+			allowAdd = allowAdd || new RegExp('^.*' + module + '\\..*$', 'i').test(data.path);
+		});
 
 		// if we are not allowed to add this file, then abort
 		if (! allowAdd) return;

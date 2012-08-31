@@ -2,8 +2,8 @@ var assert = require('assert'),
 	resolveme = require('..'),
 	path = require('path'),
 	repositories = {
-		// 'relaxed': path.resolve(__dirname, 'modules-relaxed'),
-		// 'strict': path.resolve(__dirname, 'modules-strict'),
+		'relaxed': path.resolve(__dirname, 'modules-relaxed'),
+		'strict': path.resolve(__dirname, 'modules-strict'),
 		'mixed': path.resolve(__dirname, 'modules')
 	},
 	_ = require('underscore');
@@ -123,12 +123,85 @@ describe('local resolution tests', function() {
 					// ensure we have mapcontrols.js 
 					assert(manifest.get('mapcontrols.js'));
 
-					// ensure we don't have the zoom plugin
-					assert.equal(manifest.get('zoom.js'), undefined);
+					// ensure that the zoom control was rejected
+					assert(! manifest.get('controls/zoom.js'), 'zoom control included when it should have been ignored')
 
 					done();
 
 				});
+			});
+
+			it('should be able to find a copy of mapcontrols (with zoom)', function(done) {
+				resolveme('mapcontrols[zoom]', { repository: value }, function(err, bundle) {
+					var manifest;
+
+					assert.ifError(err);
+
+					assert.equal(bundle.targets.length, 4);
+					assert.equal(bundle.targets[0].name, 'mapcontrols');
+
+					// get a copy of the manifest
+					manifest = bundle.targets[0].manifest;
+
+					// ensure we have mapcontrols.js 
+					assert(manifest.get('mapcontrols.js'));
+
+					// ensure that the zoom control was rejected
+					assert(manifest.get('controls/zoom.js'), 'zoom control was not included');
+					assert(manifest.get('controls/zoom.css'), 'zoom control css was not included');
+
+					// ensure that the scale control was rejected
+					assert(! manifest.get('controls/scale.js'), 'scale control included when it should have been ignored');
+
+					done();
+
+				});
+			});
+
+			it('should be able to find a copy of mapcontrols (with zoom and scale)', function(done) {
+				resolveme('mapcontrols[zoom:scale]', { repository: value }, function(err, bundle) {
+					var manifest;
+
+					assert.ifError(err);
+
+					assert.equal(bundle.targets.length, 4);
+					assert.equal(bundle.targets[0].name, 'mapcontrols');
+
+					// get a copy of the manifest
+					manifest = bundle.targets[0].manifest;
+
+					// ensure we have mapcontrols.js 
+					assert(manifest.get('mapcontrols.js'));
+
+					// ensure that extra controls were included
+					assert(manifest.get('controls/zoom.js'), 'zoom control was not included');
+					assert(manifest.get('controls/zoom.css'), 'zoom control css was not included');
+					assert(manifest.get('controls/scale.js'), 'scale control was not included');
+					assert(manifest.get('controls/scale.css'), 'scale control css was not included');
+
+					// ensure that the zoomrect control was rejected
+					assert(! manifest.get('controls/zoomrect.js'), 'zoomrect control included when it should have been ignored');
+
+					done();
+				});
+			});
+
+			it('should be able to find a copy of spin.js', function(done) {
+				resolveme('spin.js', { repository: value }, function(err, bundle) {
+					var manifest;
+
+					assert.ifError(err);
+
+					assert.equal(bundle.targets.length, 1);
+					assert.equal(bundle.targets[0].name, 'spin.js');
+					assert(bundle.targets[0].manifest, 'No manifest found');
+
+					// ensure that the actual library code was loaded
+					assert(bundle.targets[0].manifest.get('spin.js'), 'spin.js library code was not loaded');
+
+					done();
+				});
+
 			});
 		});
 	});
