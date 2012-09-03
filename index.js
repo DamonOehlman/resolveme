@@ -40,7 +40,7 @@ Bundle.prototype._locate = function(target, opts, callback) {
 	);
 };
 
-Bundle.prototype.add = function(target) {
+Bundle.prototype.add = function(target, atStart) {
 	// if the target is empty, return this
 	if (! target) return this;
 
@@ -59,7 +59,7 @@ Bundle.prototype.add = function(target) {
 		if (existing) return this;
 
 		// add the target
-		this.targets.push(target);
+		Array.prototype[atStart ? 'unshift' : 'push'].call(this.targets, target);
 	}
 
 	return this;
@@ -100,8 +100,13 @@ Bundle.prototype.resolve = function(opts, callback) {
 					// update the manifest
 					target.manifest = manifest || {};
 
+					// add the dependencies to the target
+					target._deps = deps || [];
+
 					// iterate through the dependencies and create new targets
-					(deps || []).forEach(bundle.add.bind(bundle));
+					target._deps.forEach(function(item) {
+						bundle.add(item, true);
+					});
 
 					// trigger the callback
 					itemCallback(err);

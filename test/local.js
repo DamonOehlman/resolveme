@@ -115,10 +115,10 @@ describe('local resolution tests', function() {
 					assert.ifError(err);
 
 					assert.equal(bundle.targets.length, 4);
-					assert.equal(bundle.targets[0].name, 'mapcontrols');
+					assert.equal(bundle.targets[3].name, 'mapcontrols');
 
 					// get a copy of the manifest
-					manifest = bundle.targets[0].manifest;
+					manifest = bundle.targets[3].manifest;
 
 					// ensure we have mapcontrols.js 
 					assert(manifest.get('mapcontrols.js'));
@@ -138,10 +138,10 @@ describe('local resolution tests', function() {
 					assert.ifError(err);
 
 					assert.equal(bundle.targets.length, 4);
-					assert.equal(bundle.targets[0].name, 'mapcontrols');
+					assert.equal(bundle.targets[3].name, 'mapcontrols');
 
 					// get a copy of the manifest
-					manifest = bundle.targets[0].manifest;
+					manifest = bundle.targets[3].manifest;
 
 					// ensure we have mapcontrols.js 
 					assert(manifest.get('mapcontrols.js'));
@@ -165,10 +165,10 @@ describe('local resolution tests', function() {
 					assert.ifError(err);
 
 					assert.equal(bundle.targets.length, 4);
-					assert.equal(bundle.targets[0].name, 'mapcontrols');
+					assert.equal(bundle.targets[3].name, 'mapcontrols');
 
 					// get a copy of the manifest
-					manifest = bundle.targets[0].manifest;
+					manifest = bundle.targets[3].manifest;
 
 					// ensure we have mapcontrols.js 
 					assert(manifest.get('mapcontrols.js'));
