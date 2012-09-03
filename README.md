@@ -2,6 +2,7 @@
 
 The `resolveme` module makes it much simpler to incorporate web resources into your project through the use of a centralized repository of libraries. 
 
+<a href="http://travis-ci.org/#!/DamonOehlman/resolveme"><img src="https://secure.travis-ci.org/DamonOehlman/resolveme.png" alt="Build Status"></a>
 
 ## Understanding Repository Structure
 
