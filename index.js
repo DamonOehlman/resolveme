@@ -45,7 +45,7 @@ Bundle.prototype.add = function(target) {
 	if (! target) return this;
 
 	if (typeof target == 'string' || (target instanceof String)) {
-		target = new findme.Requirement(target.trim());
+		target = findme.define(target.trim());
 	}
 
 	// add the target to the targets list

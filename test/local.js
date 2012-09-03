@@ -11,7 +11,7 @@ var assert = require('assert'),
 describe('local resolution tests', function() {
 
 	_.each(repositories, function(value, key) {
-		describe(key + ' repsitory tests', function() {
+		describe(key + ' repository tests', function() {
 			it('should be able to find a local copy of underscore', function(done) {
 				resolveme('underscore', { repository: value }, function(err, bundle) {
 					assert.ifError(err);

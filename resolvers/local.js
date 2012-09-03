@@ -6,7 +6,8 @@ var async = require('async'),
 	semver = require('semver'),
 	Manifest = require('../manifest').Manifest,
 	defaultDeps = require('../dependencies'),
-	regexes = require('./regexes');
+	regexes = require('./regexes'),
+	_exists = fs.exists || path.exists;
 
 function versionSort(a, b) {
 	return semver.rcompare(a.version, b.version);
@@ -31,7 +32,7 @@ function findItem(target, opts, callback) {
 		reader;
 
 	debug('looking for "' + target + '" in module path: ' + modulePath);
-	path.exists(modulePath, function(exists) {
+	_exists(modulePath, function(exists) {
 		// if the module path does not exists, then exit
 		if (! exists) return callback(new Error('Invalid module path: ' + modulePath));
 
@@ -62,8 +63,14 @@ function findItem(target, opts, callback) {
 			// filter out valid versions
 			if (target.version && target.version !== 'latest') {
 				locations = locations.filter(function(location) {
-					semver.satisfies(location.version, target.version)
+					return semver.satisfies(location.version, target.version)
 				});
+
+				// if we found no matching versions for a required version, then 
+				// return a custom error message
+				if (locations.length == 0) {
+					debug('No valid version found for: ' + target);
+				}
 			}
 
 			debug('found ' + locations.length + ' potential matching locations');
