@@ -22,8 +22,13 @@ function Bundle(targets) {
 	// initialise the targets
 	this.targets = [];
 
-	// iterate through the targets provided to the constructor and add them
-	(targets || []).forEach(this.add.bind(this));
+	// ensure the targets array is valid
+	targets = targets || [];
+
+	// add each of the targets
+	for (var ii = 0; ii < targets.length; ii++) {
+		this.add(targets[ii]);
+	}
 }
 
 util.inherits(Bundle, events.EventEmitter);
