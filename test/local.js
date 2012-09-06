@@ -186,6 +186,17 @@ describe('local resolution tests', function() {
 				});
 			});
 
+			/*
+			it('css combined content should not use semicolons when joining files', function(done) {
+				resolveme('mapcontrols[zoom:scale]', { repository: value }, function(err, bundle) {
+					assert.ifError(err);
+					console.log(bundle.getContent('css'));
+					assert(bundle.getContent('css').indexOf('.mc-scale') < 0);
+					done();
+				});
+			});
+			*/
+
 			it('should be able to find a copy of spin.js', function(done) {
 				resolveme('spin.js', { repository: value }, function(err, bundle) {
 					var manifest;

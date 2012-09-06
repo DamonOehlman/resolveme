@@ -141,7 +141,7 @@ Object.defineProperty(Manifest.prototype, 'fileTypes', {
 /* helper functions */
 
 function getFileSeparator(fileType) {
-	return fileSeparators[fileType] || fileSeparators['default'];
+	return fileSeparators[fileType.replace(regexes.leadingDot, '')] || fileSeparators['default'];
 }
 
 /* exports */

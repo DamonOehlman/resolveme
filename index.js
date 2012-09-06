@@ -72,10 +72,10 @@ Bundle.prototype.add = function(target, atStart) {
 
 Bundle.prototype.getContent = function(fileType) {
 	var items = this.targets.map(function(target) {
-		return target.manifest.getContent(fileType);
+		return target.manifest.getContent(fileType || 'js');
 	});
 
-	return items.join(getFileSeparator(fileType));
+	return resolveme.join(items, fileType || 'js');
 };
 
 Bundle.prototype.resolve = function(opts, callback) {
@@ -171,5 +171,10 @@ function resolveme(targets, opts, callback) {
 	// return the scope which passes on useful events
 	return bundle;
 }
+
+// add the resolveme join helper
+resolveme.join = function(parts, fileType) {
+	return parts.join(getFileSeparator(fileType));
+};
 
 module.exports = resolveme;
