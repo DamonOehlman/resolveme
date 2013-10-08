@@ -2,7 +2,7 @@
   "name": "resolveme",
   "description": "findme resolver for node",
   "author": "Damon Oehlman <damon.oehlman@gmail.com>",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "dependencies": {
     "async": "~0.2.9",
     "debug": "*",
