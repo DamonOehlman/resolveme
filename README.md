@@ -1,8 +1,13 @@
 # resolveme
 
-The `resolveme` module makes it much simpler to incorporate web resources into your project through the use of a centralized repository of libraries. 
+The `resolveme` module makes it much simpler to incorporate web resources
+into your project through the use of a centralized repository of
+libraries.
 
-<a href="http://travis-ci.org/#!/buildjs/resolveme"><img src="https://secure.travis-ci.org/buildjs/resolveme.png" alt="Build Status"></a>
+
+[![NPM](https://nodei.co/npm/resolveme.png)](https://nodei.co/npm/resolveme/)
+
+[![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)](https://github.com/badges/stability-badges) [![Build Status](https://img.shields.io/travis/DamonOehlman/resolveme.svg?branch=master)](https://travis-ci.org/DamonOehlman/resolveme) 
 
 ## Understanding Repository Structure
 
@@ -36,7 +41,7 @@ The following is an example of a strict module structure where copies of backbon
 |- underscore.1.2.4
 ```
 
-As each of these libraries is a simple JS library, then each of the folders will only contain a backbone.js, jquery.js or underscore.js depending on the library.  
+As each of these libraries is a simple JS library, then each of the folders will only contain a backbone.js, jquery.js or underscore.js depending on the library.
 
 It should also be noted that for single-file libraries, that you can skip including the folder and simply place a [semver] named file in the modules folder also (e.g. `backbone.0.9.2.js`).
 
@@ -55,3 +60,29 @@ As you can see this is a far simpler structure, but does mean that any version s
 
 [semver]: http://semver.org/ "Semantic Versioning"
 [findme]: https://github.com/DamonOehlman/findme
+
+
+## License(s)
+
+### MIT
+
+Copyright (c) 2014 Damon Oehlman <damon.oehlman@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

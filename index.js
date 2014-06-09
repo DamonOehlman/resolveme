@@ -8,6 +8,19 @@ var async = require('async'),
     _ = require('underscore'),
     reCommaDelim = /\,\s*/;
 
+/**
+  # resolveme
+
+  The `resolveme` module makes it much simpler to incorporate web resources
+  into your project through the use of a centralized repository of
+  libraries.
+
+  ## Understanding Repository Structure
+
+  <<< docs/structure.md
+
+**/
+
 /* private helpers */
 
 function parseTargets(targets) {

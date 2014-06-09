@@ -15,7 +15,8 @@
     "mocha": "^1"
   },
   "scripts": {
-    "test": "$(npm bin)/mocha --reporter spec -t 20000"
+    "test": "$(npm bin)/mocha --reporter spec -t 20000",
+    "gendocs": "gendocs > README.md"
   },
   "main": "index.js",
   "directories": {
