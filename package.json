@@ -14,13 +14,6 @@
   "devDependencies": {
     "mocha": "^1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://bitbucket.org/DamonOehlman/resolveme.git"
-  },
-  "bugs": {
-    "url": "https://bitbucket.org/DamonOehlman/resolveme/issues"
-  },
   "scripts": {
     "test": "$(npm bin)/mocha --reporter spec -t 20000"
   },
@@ -32,5 +25,13 @@
     "build",
     "resolver"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DamonOehlman/resolveme.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DamonOehlman/resolveme/issues"
+  },
+  "homepage": "https://github.com/DamonOehlman/resolveme"
 }
