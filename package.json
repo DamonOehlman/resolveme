@@ -5,7 +5,7 @@
   "version": "0.1.19",
   "dependencies": {
     "async": "^1.5.0",
-    "debug": "^1",
+    "debug": "^2.2.0",
     "findme": "~0.1",
     "fstream": "~0.1",
     "semver": "^2",
