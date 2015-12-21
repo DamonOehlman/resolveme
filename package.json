@@ -8,7 +8,7 @@
     "debug": "^2.2.0",
     "findme": "~0.1",
     "fstream": "^1.0.8",
-    "semver": "^2",
+    "semver": "^5.1.0",
     "underscore": "^1"
   },
   "devDependencies": {
