@@ -7,7 +7,7 @@ libraries.
 
 [![NPM](https://nodei.co/npm/resolveme.png)](https://nodei.co/npm/resolveme/)
 
-[![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)](https://github.com/badges/stability-badges) [![Build Status](https://img.shields.io/travis/DamonOehlman/resolveme.svg?branch=master)](https://travis-ci.org/DamonOehlman/resolveme) 
+[![stable](https://img.shields.io/badge/stability-stable-green.svg)](https://github.com/dominictarr/stability#stable) [![Build Status](https://api.travis-ci.org/DamonOehlman/resolveme.svg?branch=master)](https://travis-ci.org/DamonOehlman/resolveme) [![bitHound Score](https://www.bithound.io/github/DamonOehlman/resolveme/badges/score.svg)](https://www.bithound.io/github/DamonOehlman/resolveme) 
 
 ## Understanding Repository Structure
 
@@ -66,7 +66,7 @@ As you can see this is a far simpler structure, but does mean that any version s
 
 ### MIT
 
-Copyright (c) 2014 Damon Oehlman <damon.oehlman@gmail.com>
+Copyright (c) 2015 Damon Oehlman <damon.oehlman@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
